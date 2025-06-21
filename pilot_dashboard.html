@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Integration Framework · Pilot Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root { --primary:#342a86; --light-tan:#e2d6c4; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Open Sans',sans-serif;background:linear-gradient(135deg,#fff 0%,#f9f7f4 50%,var(--light-tan) 100%);color:#333;padding:2rem 1rem 4rem}
+    h1{text-align:center;color:var(--primary);font-weight:800;margin-bottom:2rem;font-size:clamp(2rem,5vw,2.5rem)}
+    .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem;max-width:1200px;margin-inline:auto}
+    .card{background:#fff;border-radius:1rem;padding:1rem 1.25rem;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+    .card h3{font-size:.8rem;font-weight:600;margin:0 0 .25rem}
+    .card .value{font-size:1.5rem;font-weight:700;color:var(--primary)}
+    .card .note{font-size:.75rem;opacity:.75}
+    .chartBox{max-width:900px;margin:3rem auto 0;background:#fff;border-radius:1rem;box-shadow:0 4px 12px rgba(0,0,0,.05);padding:1.5rem}
+    details{margin-top:.85rem}
+    summary{cursor:pointer;padding:.75rem 1rem;background:var(--primary);color:#fff;border-radius:.75rem;font-weight:600}
+    details[open] summary{background:#241d66}
+    details ul{list-style:disc inside;margin:.5rem 0 0;padding:0 1rem .5rem}
+    .roadmap{max-width:900px;margin:3rem auto;overflow-x:auto;background:#fff;border-radius:1rem;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+    table{width:100%;border-collapse:collapse;font-size:.85rem}
+    th,td{padding:.6rem .75rem;text-align:left}
+    thead{background:var(--primary);color:#fff}
+    tbody tr:nth-child(odd){background:#f6f6f6}
+    .suggest{max-width:900px;margin:3rem auto}
+    footer{text-align:center;font-size:.75rem;opacity:.7;margin-top:3rem}
+  </style>
+</head>
+<body>
+  <h1>AI Integration Framework · Pilot Dashboard</h1>
+  <section class="metrics" id="metrics"></section>
+  <div class="chartBox">
+    <h2 style="font-size:.9rem;font-weight:600;margin-bottom:.75rem">Confidence per Statement</h2>
+    <canvas id="likertChart" height="240"></canvas>
+  </div>
+  <section id="accordion"></section>
+  <section class="roadmap" id="roadmap"></section>
+  <section class="suggest" id="suggestions"></section>
+  <footer id="footer"></footer>
+<script>
+const metrics=[{title:'Overall Learning Confidence (mean)',value:'4.60 / 5',note:'Average of five capability statements across 51 learners.'},{title:'Overall Learning Confidence (median)',value:'4.80 / 5',note:'Half the cohort rated their confidence at 4.8 or higher.'},{title:'Net Promoter Score',value:'+78',note:'Seven promoters, two passives and zero detractors (n = 9).'},
+{title:'Sample Size',value:'51 learners',note:'Responses collected 17–19 Jun 2025.'},{title:'Top-rated Statement',value:'4.84 / 5',note:'Learners feel extremely confident describing the three types of work.'},{title:'Lowest-rated Statement',value:'4.52 / 5',note:'Applying the framework to day-to-day responsibilities needs reinforcement.'}];
+const strengths=["The one-page visual makes the framework easy to grasp quickly, so busy professionals can start applying it without a long ramp-up.","Learners recognise how the ideas map to actual change-management tasks, which keeps engagement high from the first module.","By distinguishing ‘human-led’ and ‘AI-assisted’ actions, the framework gives teams a shared language that eases cross-functional debates.","Beginning with purpose before tools promotes strategic thinking and prevents technology-first mistakes that often derail AI projects.","Alignment with the familiar ADKAR model lends credibility and comforts stakeholders who worry about yet another new methodology."];
+const weaknesses=["Learners requested step-by-step playbooks so they can operationalise the ideas immediately after the course.","Generic examples make it hard for niche groups to see relevance; sector-specific stories would help them connect the dots.","Advanced users want deeper dives into technical nuances such as prompting strategies and data-quality checks.","Terms like ‘generative’ and ‘extractive’ still confuse some newcomers, indicating a need for an embedded glossary.","The majority of tool references are U.S.-centric, so global teams struggle to identify local alternatives."];
+const orgValue=["Teams believe the framework could shave 25–40 % off change-impact analysis time by providing structured AI checkpoints.","Several participants discovered quick automation wins during the pilot, hinting at untapped efficiency gains.","Executives appreciate a decision framework that separates strategic objectives from tactical tool choices.","Built-in guard-rails and ethical prompts are viewed as a practical way to de-risk AI adoption at scale.","Managers see an opportunity to upskill more quickly and rely less on external consultants, reducing costs."];
+const prosciFit=["Participants view the content as a natural add-on to ADKAR® and other Prosci offerings, adding an AI dimension to the toolkit.","There is interest in executive briefings co-delivered by Prosci change advisers and data-science experts.","Learners want branded job aids they can distribute directly to project teams for everyday reference.","Subscription customers asked whether the framework could live in the Prosci.com toolkit for quick access and version control.","Credential-oriented professionals suggested a micro-credential that could stack toward Prosci Practitioner certification."];
+const roadmap=[{horizon:'Now (July)',owner:'Instructional Design',action:'Produce three scenario videos and a two-page quick-reference PDF to reinforce on-the-job use.',kpi:'‘Apply to role’ average ≥ 4.7'},{horizon:'Aug 2025 Cohort',owner:'LMS Admin',action:'Activate NPS and an open-ended feedback prompt for 100 % of learners.',kpi:'NPS ≥ +60 once n ≥ 40'},{horizon:'Q3 2025',owner:'Product',action:'Launch a paid micro-credential with graded case studies and downloadable job aids.',kpi:'15 % attach-rate'},{horizon:'Q4 2025',owner:'Sales',action:'Bundle the framework into Prosci Change Practitioner renewals and new-logo pitches.',kpi:'Incremental upsell revenue (TBD)'}];
+const suggestions=[{title:'Create Role-Specific Playbooks',body:'Draft two-page guides that translate the framework into daily actions for project managers, sponsors and frontline leads. This fills the ‘what next?’ gap noted by learners.'},{title:'Integrate Scenario Videos Early',body:'Place the scenario videos directly after the concept overview so learners see theory in motion before attempting practice.'},{title:'Expand the Jargon Glossary',body:'Embed a pop-up glossary that defines technical terms in plain English, reducing cognitive load for novices.'},{title:'Develop Industry-Specific Case Studies',body:'Add short narratives for healthcare, finance and manufacturing to illustrate adaptation in regulated and high-volume environments.'},{title:'Publish an Interactive Job Aid',body:'Turn the one-page visual into an interactive checklist with hover-tips to encourage in-flow use.'},{title:'Activate Continuous NPS Collection',body:'Keep the recommend question live to monitor sentiment over time and catch dips early.'},{title:'Localise Tool References',body:'Offer alternative AI tooling options for EMEA and APAC teams to ensure legal compliance and relevance.'},{title:'Offer Executive Briefing Packages',body:'Bundle a 60-minute session for leaders to set context and secure sponsorship before team rollout.'}];
+
+document.getElementById('metrics').innerHTML=metrics.map(m=>`<div class="card"><h3>${m.title}</h3><div class="value">${m.value}</div><p class="note">${m.note}</p></div>`).join('');
+new Chart(document.getElementById('likertChart').getContext('2d'),{type:'bar',data:{labels:["Describe types","Spot fit","Explain benefits","Select method","Apply to role"],datasets:[{label:'Average score',data:[4.84,4.65,4.6,4.58,4.52],backgroundColor:'rgba(52,42,134,0.75)',borderRadius:6}]},options:{scales:{y:{suggestedMin:0,suggestedMax:5,ticks:{stepSize:1}},x:{grid:{display:false},ticks:{maxRotation:45,minRotation:45}}},plugins:{legend:{display:false}}}});
+document.getElementById('accordion').innerHTML=[{label:'Key Strengths',items:strengths},{label:'Primary Weaknesses',items:weaknesses},{label:'Organisational Value',items:orgValue},{label:'Fit with Prosci Portfolio',items:prosciFit}].map(({label,items})=>`<details><summary>${label}</summary><ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul></details>`).join('');
+document.getElementById('roadmap').innerHTML=`<table><thead><tr><th>Horizon</th><th>Owner</th><th>Action</th><th>KPI</th></tr></thead><tbody>${roadmap.map(r=>`<tr><td>${r.horizon}</td><td>${r.owner}</td><td>${r.action}</td><td style="color:var(--primary);font-weight:600">${r.kpi}</td></tr>`).join('')}</tbody></table>`;
+document.getElementById('suggestions').innerHTML=`<h2 style="font-size:1.1rem;font-weight:600;margin-bottom:.75rem">Top Implementation Suggestions</h2><ol style="list-style:decimal inside">${suggestions.map(s=>`<li style="margin-bottom:.75rem"><strong>${s.title}:</strong> ${s.body}</li>`).join('')}</ol>`;
+document.getElementById('footer').textContent=`Data from June 2025 pilot · dashboard generated ${new Date().toLocaleDateString()}`;
+</script>
+</body>
+</html>
